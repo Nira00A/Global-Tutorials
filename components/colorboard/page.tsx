@@ -14,7 +14,7 @@ interface ColorPickerProps {
   handleColorPicker: (colorName: string) => void;
 }
 
-export default function MorphingColorPicker({ handleColorPicker }: ColorPickerProps) {
+export function MorphingColorPicker({ handleColorPicker }: ColorPickerProps) {
   return (
     <div 
       onMouseDown={(e) => e.stopPropagation()}

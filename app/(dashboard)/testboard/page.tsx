@@ -1,7 +1,8 @@
 'use client'
 
 import React, { JSXElementConstructor, ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
-import MorphingColorPicker from './colorboard/page'
+// TODO: Fix the import path below to match your project structure
+import { MorphingColorPicker } from '@/components/colorboard/page'
 
 interface Camera {
     x: number,
@@ -13,7 +14,9 @@ interface Box {
     activeId: string,
     x: number,
     y: number,
-    color: string
+    color: string,
+    content: string,
+    fontSize: string
 }
 
 interface DragRef {
@@ -27,6 +30,14 @@ interface DragRef {
 
 interface GetId {
     id: string
+}
+
+interface EditableBoxProps {
+   id: string,
+   content: string,
+   color: string,
+   fontSize: string,
+   onUpdate: (id: string , newContent: string) => void
 }
 
 export default function InfiniteBoard() {
@@ -98,6 +109,7 @@ export default function InfiniteBoard() {
 
         return (
             <div
+            contentEditable = {false}
             onMouseDown={(e) => e.stopPropagation()} 
             style={{transform: `scale(${camera.zoom < 1 ? 1 / camera.zoom : '1'})`}}
             className='absolute -top-8 py-0.5 px-0.5 flex gap-2 select-none cursor-pointer bg-neutral-900 border border-neutral-800 rounded-sm'>
@@ -120,6 +132,20 @@ export default function InfiniteBoard() {
                     T
                 </div>
                 {isPalletOpen && <MorphingColorPicker handleColorPicker={handleColorPicker}/>}
+            </div>
+        )
+    }
+
+    const EditableBox = ({id , content , color , fontSize , onUpdate} : EditableBoxProps) => {
+        return (
+            <div
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => onUpdate(id, e.currentTarget.textContent || '')}
+                style={{ fontSize: `${fontSize}px` }}
+                className="w-full h-full outline-none text-center"
+            >
+                {content}
             </div>
         )
     }
@@ -259,7 +285,9 @@ export default function InfiniteBoard() {
         activeId: crypto.randomUUID(),
         x: snappedX,
         y: snappedY,
-        color: `bg-cyan-500 border-cyan-200`
+        color: `bg-cyan-500 border-cyan-200`,
+        fontSize: '16',
+        content: ''
         };
         setBox(prev => [...prev, newBox]);
     };
@@ -371,6 +399,12 @@ export default function InfiniteBoard() {
         })
     }
 
+    const updateBoxContent = (id: string, newContent: string) => {
+        setBox((prev) => prev.map(b => 
+            b.activeId === id ? { ...b, content: newContent } : b
+        ));
+    };
+
   return (
     <div 
       ref={containerRef}
@@ -382,7 +416,7 @@ export default function InfiniteBoard() {
       style={{ 
         cursor: 'context-menu',
         // Update background to match GRID_SIZE so snapping looks correct
-        backgroundImage: 'radial-gradient(#444 1px, transparent 1px)', 
+        backgroundImage: 'radial-gradient(#222 1px, transparent 1px)', 
         backgroundSize: `${GRID_SIZE * camera.zoom}px ${GRID_SIZE * camera.zoom}px`,
         backgroundPosition: `${camera.x}px ${camera.y}px` 
       }}
@@ -413,9 +447,12 @@ export default function InfiniteBoard() {
                 >
                     {isSelected && <ShowOptions id= {box.activeId}/>}
 
-                    <span className="text-xs font-bold pointer-events-none mix-blend-difference">
-                    {box.x}, {box.y}
-                    </span>
+                    <EditableBox 
+                    id={box.activeId}
+                    content={box.content}
+                    color={box.color}
+                    fontSize={box.fontSize}
+                    onUpdate={updateBoxContent}/>
                 </div>
             )})}
 
