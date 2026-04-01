@@ -1,0 +1,10 @@
+langchain
+langgraph
+langchain_community
+langchain_openai
+langchain_groq
+langchain_google_genai
+python-dotenv
+langchain_huggingface
+langchain_ollama
+ipykernel>=7.2.0
