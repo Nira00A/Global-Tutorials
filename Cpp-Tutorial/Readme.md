@@ -26,7 +26,7 @@ cpp code -> compiler -> Excutable binary file
 ## What is Cpp?What type of program it is?
 1. A statement is a basic unit of computation in a C++ program
 2. Every C++ program is a collection of statements organized in a certain way to achieve some goal.
-3. Statements end wirh a semicolon in C++( ; ) 
+3. Statements end wirh a semicolon in C++( ; )
 
 ## Functions and Variables 
 ### How to write a function in Cpp:
